@@ -27,7 +27,7 @@ def get_trained_RandomForest_bodies(training_X, training_Y):
         'min_samples_leaf': (1, 2, 5, 10)
     }, n_jobs=-1)
     model.fit(training_X, training_Y)
-    file.write("Best parameters for RF bodies model: ")
+    file.write("\n" + "Best parameters for RF bodies model: ")
     file.write("\n" + str(model.best_params_) + "\n")
     file.write(str(model.best_score_))
     return model
@@ -44,7 +44,7 @@ def get_trained_RandomForest_summaries(training_X, training_Y):
         'min_samples_leaf': (1, 2, 5, 10)
     }, n_jobs=-1)
     model.fit(training_X, training_Y)
-    file.write("Best parameters for RF summaries model: ")
+    file.write("\n" + "Best parameters for RF summaries model: ")
     file.write("\n" + str(model.best_params_) + "\n")
     file.write(str(model.best_score_))
     return model
@@ -57,7 +57,7 @@ def get_trained_AdaBoost_summaries(training_X, training_Y):
         'learning_rate': (0.1, 0.5, 1)
     })
     model.fit(training_X, training_Y)
-    file.write("Best parameters for Adaboost summaries model: ")
+    file.write("\n" + "Best parameters for Adaboost summaries model: ")
     file.write("\n" + str(model.best_params_) + "\n")
     file.write(str(model.best_score_))
     return model
@@ -70,7 +70,7 @@ def get_trained_AdaBoost_bodies(training_X, training_Y):
         'learning_rate': (0.1, 0.5, 1)
     })
     model.fit(training_X, training_Y)
-    file.write("Best parameters for Adaboost bodies model: ")
+    file.write("\n" + "Best parameters for Adaboost bodies model: ")
     file.write("\n" + str(model.best_params_) + "\n")
     file.write(str(model.best_score_))
     return model
@@ -94,7 +94,7 @@ def get_trained_GBC_summaries(training_X, training_Y):
             'max_features': ['auto', 'sqrt', 'log2']
         })
     model.fit(training_X, training_Y)
-    file.write("Best parameters for GBC summaries model: ")
+    file.write("\n" + "Best parameters for GBC summaries model: ")
     file.write("\n" + str(model.best_params_) + "\n")
     file.write(str(model.best_score_))
     return model
@@ -112,7 +112,7 @@ def get_trained_GBC_bodies(training_X, training_Y):
             'max_features': ['auto', 'sqrt', 'log2']
         })
     model.fit(training_X, training_Y)
-    file.write("Best parameters for GBC bodies model: ")
+    file.write("\n" + "Best parameters for GBC bodies model: ")
     file.write("\n" + str(model.best_params_) + "\n")
     file.write(str(model.best_score_))
     return model
@@ -139,7 +139,7 @@ def get_trained_SVM(processed_SVM_training_features, y_train):
         'shrinking': [True, False]
     })
     model.fit(processed_SVM_training_features, y_train)
-    file.write("Best parameters for SVC model: ")
+    file.write("\n" + "Best parameters for SVC model: ")
     file.write("\n" + str(model.best_params_) + "\n")
     file.write(str(model.best_score_))
     return model
