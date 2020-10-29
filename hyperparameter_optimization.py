@@ -28,8 +28,8 @@ def get_trained_RandomForest_bodies(training_X, training_Y):
     }, n_jobs=-1)
     model.fit(training_X, training_Y)
     file.write("Best parameters for RF bodies model: ")
-    file.write(model.best_params_)
-    file.write(model.best_score_)
+    file.write("\n" + str(model.best_params_) + "\n")
+    file.write(str(model.best_score_))
     return model
 
 def get_trained_RandomForest_summaries(training_X, training_Y):
@@ -45,8 +45,8 @@ def get_trained_RandomForest_summaries(training_X, training_Y):
     }, n_jobs=-1)
     model.fit(training_X, training_Y)
     file.write("Best parameters for RF summaries model: ")
-    file.write(model.best_params_)
-    file.write(model.best_score_)
+    file.write("\n" + str(model.best_params_) + "\n")
+    file.write(str(model.best_score_))
     return model
 
 def get_trained_AdaBoost_summaries(training_X, training_Y):
@@ -58,8 +58,8 @@ def get_trained_AdaBoost_summaries(training_X, training_Y):
     })
     model.fit(training_X, training_Y)
     file.write("Best parameters for Adaboost summaries model: ")
-    file.write(model.best_params_)
-    file.write(model.best_score_)
+    file.write("\n" + str(model.best_params_) + "\n")
+    file.write(str(model.best_score_))
     return model
 
 def get_trained_AdaBoost_bodies(training_X, training_Y):
@@ -71,8 +71,8 @@ def get_trained_AdaBoost_bodies(training_X, training_Y):
     })
     model.fit(training_X, training_Y)
     file.write("Best parameters for Adaboost bodies model: ")
-    file.write(model.best_params_)
-    file.write(model.best_score_)
+    file.write("\n" + str(model.best_params_) + "\n")
+    file.write(str(model.best_score_))
     return model
 
 def get_trained_MultinomialNB(training_X, training_Y):
@@ -95,8 +95,8 @@ def get_trained_GBC_summaries(training_X, training_Y):
         })
     model.fit(training_X, training_Y)
     file.write("Best parameters for GBC summaries model: ")
-    file.write(model.best_params_)
-    file.write(model.best_score_)
+    file.write("\n" + str(model.best_params_) + "\n")
+    file.write(str(model.best_score_))
     return model
 
 def get_trained_GBC_bodies(training_X, training_Y):
@@ -113,8 +113,8 @@ def get_trained_GBC_bodies(training_X, training_Y):
         })
     model.fit(training_X, training_Y)
     file.write("Best parameters for GBC bodies model: ")
-    file.write(model.best_params_)
-    file.write(model.best_score_)
+    file.write("\n" + str(model.best_params_) + "\n")
+    file.write(str(model.best_score_))
     return model
 
 def get_SVM_features(models, processed_summaries, processed_bodies):
@@ -140,8 +140,8 @@ def get_trained_SVM(processed_SVM_training_features, y_train):
     })
     model.fit(processed_SVM_training_features, y_train)
     file.write("Best parameters for SVC model: ")
-    file.write(model.best_params_)
-    file.write(model.best_score_)
+    file.write("\n" + str(model.best_params_) + "\n")
+    file.write(str(model.best_score_))
     return model
 
 def addVaderFeatures(panda, unprocessed_text):
@@ -153,7 +153,6 @@ def addVaderFeatures(panda, unprocessed_text):
     panda['neg'] = [analyzer.polarity_scores(x)['neg'] for x in unprocessed_text]
     panda['neu'] = [analyzer.polarity_scores(x)['neu'] for x in unprocessed_text]
     panda['pos'] = [analyzer.polarity_scores(x)['pos'] for x in unprocessed_text]
-
 
 
 training = pd.read_csv('Groceries_Processed_Training_Data.csv', nrows=5000)
