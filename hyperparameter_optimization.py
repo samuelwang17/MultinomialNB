@@ -5,6 +5,7 @@ import sklearn
 
 pd.options.mode.chained_assignment = None
 file = open("output.txt", 'w')
+outputList = []
 from sklearn.feature_extraction.text import TfidfVectorizer
 def get_vectorizer(column, X, ngram_range):
     vectorizer = TfidfVectorizer(max_features=4000, stop_words='english', ngram_range=ngram_range)
@@ -27,9 +28,10 @@ def get_trained_RandomForest_bodies(training_X, training_Y):
         'min_samples_leaf': (1, 2, 5, 10)
     }, n_jobs=-1)
     model.fit(training_X, training_Y)
-    file.write("\n" + "Best parameters for RF bodies model: ")
-    file.write("\n" + str(model.best_params_) + "\n")
-    file.write(str(model.best_score_))
+    outputList.append("\n" + "Best parameters for RF bodies model: ")
+    outputList.append("\n" + str(model.best_params_) + "\n")
+    outputList.append(str(model.best_score_))
+    print("Finished RandomForest bodies model")
     return model
 
 def get_trained_RandomForest_summaries(training_X, training_Y):
@@ -44,9 +46,10 @@ def get_trained_RandomForest_summaries(training_X, training_Y):
         'min_samples_leaf': (1, 2, 5, 10)
     }, n_jobs=-1)
     model.fit(training_X, training_Y)
-    file.write("\n" + "Best parameters for RF summaries model: ")
-    file.write("\n" + str(model.best_params_) + "\n")
-    file.write(str(model.best_score_))
+    outputList.append("\n" + "Best parameters for RF summaries model: ")
+    outputList.append("\n" + str(model.best_params_) + "\n")
+    outputList.append(str(model.best_score_))
+    print("Finished RandomForest summaries model")
     return model
 
 def get_trained_AdaBoost_summaries(training_X, training_Y):
@@ -57,9 +60,10 @@ def get_trained_AdaBoost_summaries(training_X, training_Y):
         'learning_rate': (0.1, 0.5, 1)
     })
     model.fit(training_X, training_Y)
-    file.write("\n" + "Best parameters for Adaboost summaries model: ")
-    file.write("\n" + str(model.best_params_) + "\n")
-    file.write(str(model.best_score_))
+    outputList.append("\n" + "Best parameters for Adaboost summaries model: ")
+    outputList.append("\n" + str(model.best_params_) + "\n")
+    outputList.append(str(model.best_score_))
+    print("Finished Adaboost summaries model")
     return model
 
 def get_trained_AdaBoost_bodies(training_X, training_Y):
@@ -70,9 +74,10 @@ def get_trained_AdaBoost_bodies(training_X, training_Y):
         'learning_rate': (0.1, 0.5, 1)
     })
     model.fit(training_X, training_Y)
-    file.write("\n" + "Best parameters for Adaboost bodies model: ")
-    file.write("\n" + str(model.best_params_) + "\n")
-    file.write(str(model.best_score_))
+    outputList.append("\n" + "Best parameters for Adaboost bodies model: ")
+    outputList.append("\n" + str(model.best_params_) + "\n")
+    outputList.append(str(model.best_score_))
+    print("Finished Adaboost bodies model")
     return model
 
 def get_trained_MultinomialNB(training_X, training_Y):
@@ -94,9 +99,10 @@ def get_trained_GBC_summaries(training_X, training_Y):
             'max_features': ['auto', 'sqrt', 'log2']
         })
     model.fit(training_X, training_Y)
-    file.write("\n" + "Best parameters for GBC summaries model: ")
-    file.write("\n" + str(model.best_params_) + "\n")
-    file.write(str(model.best_score_))
+    outputList.append("\n" + "Best parameters for GBC summaries model: ")
+    outputList.append("\n" + str(model.best_params_) + "\n")
+    outputList.append(str(model.best_score_))
+    print("Finished GBC summaries model")
     return model
 
 def get_trained_GBC_bodies(training_X, training_Y):
@@ -112,9 +118,10 @@ def get_trained_GBC_bodies(training_X, training_Y):
             'max_features': ['auto', 'sqrt', 'log2']
         })
     model.fit(training_X, training_Y)
-    file.write("\n" + "Best parameters for GBC bodies model: ")
-    file.write("\n" + str(model.best_params_) + "\n")
-    file.write(str(model.best_score_))
+    outputList.append("\n" + "Best parameters for GBC bodies model: ")
+    outputList.append("\n" + str(model.best_params_) + "\n")
+    outputList.append(str(model.best_score_))
+    print("Finished GBC bodies model")
     return model
 
 def get_SVM_features(models, processed_summaries, processed_bodies):
@@ -139,14 +146,14 @@ def get_trained_SVM(processed_SVM_training_features, y_train):
         'shrinking': [True, False]
     })
     model.fit(processed_SVM_training_features, y_train)
-    file.write("\n" + "Best parameters for SVC model: ")
-    file.write("\n" + str(model.best_params_) + "\n")
-    file.write(str(model.best_score_))
+    outputList.append("\n" + "Best parameters for SVC model: ")
+    outputList.append("\n" + str(model.best_params_) + "\n")
+    outputList.append(str(model.best_score_))
     return model
 
 def addVaderFeatures(panda, unprocessed_text):
-    file.write(unprocessed_text.size)
-    file.write(panda.size)
+    outputList.append(unprocessed_text.size)
+    outputList.append(panda.size)
     from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
     analyzer = SentimentIntensityAnalyzer()
     panda['compound'] = [analyzer.polarity_scores(x)['compound'] for x in unprocessed_text]
@@ -188,7 +195,7 @@ processed_summaries_outer_train = process_TFIDF_bow(rf_review_summary_vectorizer
 processed_summaries_cv = process_TFIDF_bow(rf_review_summary_vectorizer, X_cross_validation['Summaries'])
 processed_bodies_cv = process_TFIDF_bow(rf_review_body_vectorizer, X_cross_validation['Reviews'])
 
-file.write("done getting features")
+print("done getting features")
 
 models = {}
 
@@ -206,8 +213,10 @@ summary_scores = RFC_summaries.predict_proba(processed_summaries_outer_train)[:,
 
 from sklearn.metrics import classification_report
 
-file.write(classification_report(np.round(body_scores.tolist()), y_outerTrain))
-file.write(classification_report(np.round(summary_scores.tolist()), y_outerTrain))
+outputList.append("Random forest body scores")
+outputList.append(classification_report(np.round(body_scores.tolist()), y_outerTrain))
+outputList.append("Random forest summary scores")
+outputList.append(classification_report(np.round(summary_scores.tolist()), y_outerTrain))
 
 ADA_bodies = get_trained_AdaBoost_bodies(processed_bodies_inner_train, y_innerTrain)
 models['ADAbodies'] = ADA_bodies
@@ -220,8 +229,10 @@ summary_scores = ADA_summaries.predict_proba(processed_summaries_outer_train)[:,
 
 from sklearn.metrics import classification_report
 
-file.write(classification_report(np.round(body_scores.tolist()), y_outerTrain))
-file.write(classification_report(np.round(summary_scores.tolist()), y_outerTrain))
+outputList.append("ADA body scores")
+outputList.append(classification_report(np.round(body_scores.tolist()), y_outerTrain))
+outputList.append("ADAsummary scores")
+outputList.append(classification_report(np.round(summary_scores.tolist()), y_outerTrain))
 
 NB_summaries = get_trained_MultinomialNB(processed_summaries_inner_train, y_innerTrain)
 models['NBsummaries'] = NB_summaries
@@ -232,8 +243,10 @@ NB_body_scores = NB_bodies.predict_proba(processed_bodies_outer_train)[:, 1]
 NB_summary_scores = NB_summaries.predict_proba(processed_summaries_outer_train)[:, 1]
 
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
-file.write(classification_report(np.round(NB_body_scores.tolist()), y_outerTrain))
-file.write(classification_report(np.round(NB_summary_scores.tolist()), y_outerTrain))
+outputList.append("NB body scores")
+outputList.append(classification_report(np.round(NB_body_scores.tolist()), y_outerTrain))
+outputList.append("NB summary scores")
+outputList.append(classification_report(np.round(NB_summary_scores.tolist()), y_outerTrain))
 
 
 GBC_summaries = get_trained_GBC_summaries(processed_summaries_inner_train, y_innerTrain)
@@ -247,6 +260,10 @@ summary_scores = GBC_summaries.predict_proba(processed_summaries_outer_train)[:,
 
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 
-# file.write(confusion_matrix(y_cross_validation.tolist(),y_pred))
-file.write(classification_report(np.round(body_scores.tolist()), y_outerTrain))
-file.write(classification_report(np.round(summary_scores.tolist()), y_outerTrain))
+# outputList.append(confusion_matrix(y_cross_validation.tolist(),y_pred))
+outputList.append("GBC body scores")
+outputList.append(classification_report(np.round(body_scores.tolist()), y_outerTrain))
+outputList.append("GBC summary scores")
+outputList.append(classification_report(np.round(summary_scores.tolist()), y_outerTrain))
+
+file.write(str(outputList))
