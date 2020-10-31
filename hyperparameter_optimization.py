@@ -90,10 +90,8 @@ def get_trained_GBC_summaries(training_X, training_Y):
     from sklearn.ensemble import GradientBoostingClassifier
     from sklearn.model_selection import GridSearchCV
     model = GridSearchCV(GradientBoostingClassifier(random_state=3), param_grid={
-            'loss': ['deviance', 'exponential'],
             'learning_rate': (0.1, 0.2, 0.5),
             'n_estimators': (100, 200, 500),
-            'criterion': ['friedman_mse', 'mse', 'mae'],
             'min_samples_split': (2, 5, 10),
             'max_depth': (3, 5, 10),
             'max_features': ['auto', 'sqrt', 'log2']
@@ -109,14 +107,12 @@ def get_trained_GBC_bodies(training_X, training_Y):
     from sklearn.ensemble import GradientBoostingClassifier
     from sklearn.model_selection import GridSearchCV
     model = GridSearchCV(GradientBoostingClassifier(random_state=3), param_grid={
-            'loss': ['deviance', 'exponential'],
-            'learning_rate': (0.1, 0.2, 0.5),
-            'n_estimators': (100, 200, 500),
-            'criterion': ['friedman_mse', 'mse', 'mae'],
-            'min_samples_split': (2, 5, 10),
-            'max_depth': (3, 5, 10),
-            'max_features': ['auto', 'sqrt', 'log2']
-        })
+        'learning_rate': (0.1, 0.2, 0.5),
+        'n_estimators': (100, 200, 500),
+        'min_samples_split': (2, 5, 10),
+        'max_depth': (3, 5, 10),
+        'max_features': ['auto', 'sqrt', 'log2']
+    })
     model.fit(training_X, training_Y)
     outputList.append("\n" + "Best parameters for GBC bodies model: ")
     outputList.append("\n" + str(model.best_params_) + "\n")
@@ -162,7 +158,7 @@ def addVaderFeatures(panda, unprocessed_text):
     panda['pos'] = [analyzer.polarity_scores(x)['pos'] for x in unprocessed_text]
 
 
-training = pd.read_csv('Groceries_Processed_Training_Data.csv', nrows=5000)
+training = pd.read_csv('Groceries_Processed_Training_Data.csv', nrows=50)
 del training['Unnamed: 0']
 
 Y = training['Awesome?']
