@@ -4,7 +4,10 @@ import pandas as pd
 import sklearn
 
 pd.options.mode.chained_assignment = None
-file = open("output.txt", 'w')
+rf_file = open("rf_output.txt", 'w')
+ada_file = open("ada_output.txt", 'w')
+gbc_file = open("gbc_output.txt", 'w')
+
 outputList = []
 from sklearn.feature_extraction.text import TfidfVectorizer
 def get_vectorizer(column, X, ngram_range):
@@ -94,7 +97,6 @@ def get_trained_GBC_summaries(training_X, training_Y):
             'n_estimators': (100, 200, 500),
             'min_samples_split': (2, 5, 10),
             'max_depth': (3, 5, 10),
-            'max_features': ['auto', 'sqrt', 'log2']
         })
     model.fit(training_X, training_Y)
     outputList.append("\n" + "Best parameters for GBC summaries model: ")
@@ -111,7 +113,6 @@ def get_trained_GBC_bodies(training_X, training_Y):
         'n_estimators': (100, 200, 500),
         'min_samples_split': (2, 5, 10),
         'max_depth': (3, 5, 10),
-        'max_features': ['auto', 'sqrt', 'log2']
     })
     model.fit(training_X, training_Y)
     outputList.append("\n" + "Best parameters for GBC bodies model: ")
@@ -214,6 +215,9 @@ outputList.append(classification_report(np.round(body_scores.tolist()), y_outerT
 outputList.append("Random forest summary scores")
 outputList.append(classification_report(np.round(summary_scores.tolist()), y_outerTrain))
 
+rf_file.write(str(outputList))
+rf_file.close()
+
 ADA_bodies = get_trained_AdaBoost_bodies(processed_bodies_inner_train, y_innerTrain)
 models['ADAbodies'] = ADA_bodies
 ADA_summaries = get_trained_AdaBoost_summaries(processed_summaries_inner_train, y_innerTrain)
@@ -229,6 +233,9 @@ outputList.append("ADA body scores")
 outputList.append(classification_report(np.round(body_scores.tolist()), y_outerTrain))
 outputList.append("ADAsummary scores")
 outputList.append(classification_report(np.round(summary_scores.tolist()), y_outerTrain))
+
+ada_file.write(str(outputList))
+ada_file.close()
 
 NB_summaries = get_trained_MultinomialNB(processed_summaries_inner_train, y_innerTrain)
 models['NBsummaries'] = NB_summaries
@@ -262,4 +269,5 @@ outputList.append(classification_report(np.round(body_scores.tolist()), y_outerT
 outputList.append("GBC summary scores")
 outputList.append(classification_report(np.round(summary_scores.tolist()), y_outerTrain))
 
-file.write(str(outputList))
+gbc_file.write(str(outputList))
+gbc_file.close()
