@@ -4,14 +4,9 @@ import pandas as pd
 import sklearn
 
 pd.options.mode.chained_assignment = None
-rf_file = open("rf_output.txt", 'w')
-ada_file = open("ada_output.txt", 'w')
-gbc_file = open("gbc_output.txt", 'w')
-
-outputList = []
 from sklearn.feature_extraction.text import TfidfVectorizer
 def get_vectorizer(column, X, ngram_range):
-    vectorizer = TfidfVectorizer(max_features=4000, stop_words='english', ngram_range=ngram_range)
+    vectorizer = TfidfVectorizer(max_features=4000, ngram_range=ngram_range)
     vectorizer.fit(X[column].apply(lambda x: np.str_(x)))
     return vectorizer
 
@@ -19,7 +14,8 @@ def process_TFIDF_bow(vectorizer, unprocessed_column):
     result = vectorizer.transform(unprocessed_column.apply(lambda x: np.str_(x)))
     return result.toarray()
 
-def get_trained_RandomForest_bodies(training_X, training_Y):
+# hyperparameter optimization for RandomForest bodies
+def get_RandomForest_bodies_parameters(training_X, training_Y):
     from sklearn.ensemble import RandomForestClassifier
     from sklearn.model_selection import GridSearchCV
     model = GridSearchCV(RandomForestClassifier(random_state=3), param_grid={
@@ -31,13 +27,12 @@ def get_trained_RandomForest_bodies(training_X, training_Y):
         'min_samples_leaf': (1, 2, 5, 10)
     }, n_jobs=-1)
     model.fit(training_X, training_Y)
-    outputList.append("\n" + "Best parameters for RF bodies model: ")
-    outputList.append("\n" + str(model.best_params_) + "\n")
-    outputList.append(str(model.best_score_))
-    print("Finished RandomForest bodies model")
-    return model
+    print("Best parameters for RF bodies model: ")
+    print(str(model.best_params_) + "\n")
 
-def get_trained_RandomForest_summaries(training_X, training_Y):
+
+# hyperparameter optimization for RandomForest summaries
+def get_RandomForest_summaries_parameters(training_X, training_Y):
     from sklearn.ensemble import RandomForestClassifier
     from sklearn.model_selection import GridSearchCV
     model = GridSearchCV(RandomForestClassifier(random_state=3), param_grid={
@@ -49,13 +44,11 @@ def get_trained_RandomForest_summaries(training_X, training_Y):
         'min_samples_leaf': (1, 2, 5, 10)
     }, n_jobs=-1)
     model.fit(training_X, training_Y)
-    outputList.append("\n" + "Best parameters for RF summaries model: ")
-    outputList.append("\n" + str(model.best_params_) + "\n")
-    outputList.append(str(model.best_score_))
-    print("Finished RandomForest summaries model")
-    return model
+    print("Best parameters for RF summaries model: ")
+    print(str(model.best_params_) + "\n")
 
-def get_trained_AdaBoost_summaries(training_X, training_Y):
+# hyperparameter optimization for AdaBoost summaries
+def get_AdaBoost_summaries_parameters(training_X, training_Y):
     from sklearn.ensemble import AdaBoostClassifier
     from sklearn.model_selection import GridSearchCV
     model = GridSearchCV(AdaBoostClassifier(random_state=3), param_grid={
@@ -63,13 +56,11 @@ def get_trained_AdaBoost_summaries(training_X, training_Y):
         'learning_rate': (0.1, 0.5, 1)
     })
     model.fit(training_X, training_Y)
-    outputList.append("\n" + "Best parameters for Adaboost summaries model: ")
-    outputList.append("\n" + str(model.best_params_) + "\n")
-    outputList.append(str(model.best_score_))
-    print("Finished Adaboost summaries model")
-    return model
+    print("Best parameters for Adaboost summaries model: ")
+    print(str(model.best_params_) + "\n")
 
-def get_trained_AdaBoost_bodies(training_X, training_Y):
+# hyperparameter optimization for AdaBoost bodies
+def get_AdaBoost_bodies_parameters(training_X, training_Y):
     from sklearn.ensemble import AdaBoostClassifier
     from sklearn.model_selection import GridSearchCV
     model = GridSearchCV(AdaBoostClassifier(random_state=3), param_grid={
@@ -77,49 +68,35 @@ def get_trained_AdaBoost_bodies(training_X, training_Y):
         'learning_rate': (0.1, 0.5, 1)
     })
     model.fit(training_X, training_Y)
-    outputList.append("\n" + "Best parameters for Adaboost bodies model: ")
-    outputList.append("\n" + str(model.best_params_) + "\n")
-    outputList.append(str(model.best_score_))
-    print("Finished Adaboost bodies model")
-    return model
+    print("Best parameters for Adaboost bodies model: ")
+    print(str(model.best_params_) + "\n")
 
-def get_trained_MultinomialNB(training_X, training_Y):
-    from sklearn.naive_bayes import MultinomialNB
-    model = MultinomialNB()
-    model.fit(training_X, training_Y)
-    return model
-
-def get_trained_GBC_summaries(training_X, training_Y):
+# hyperparameter optimization for GBC summaries
+def get_GBC_summaries_parameters(training_X, training_Y):
     from sklearn.ensemble import GradientBoostingClassifier
     from sklearn.model_selection import GridSearchCV
     model = GridSearchCV(GradientBoostingClassifier(random_state=3), param_grid={
             'learning_rate': (0.1, 0.2, 0.5),
             'n_estimators': (100, 200, 500),
-            'min_samples_split': (2, 5, 10),
-            'max_depth': (3, 5, 10),
+            'min_samples_split': (2, 5, 10)
         })
     model.fit(training_X, training_Y)
-    outputList.append("\n" + "Best parameters for GBC summaries model: ")
-    outputList.append("\n" + str(model.best_params_) + "\n")
-    outputList.append(str(model.best_score_))
-    print("Finished GBC summaries model")
-    return model
+    print("\n" + "Best parameters for GBC summaries model: ")
+    print("\n" + str(model.best_params_) + "\n")
 
-def get_trained_GBC_bodies(training_X, training_Y):
+# hyperparameter optimization for GBC bodies
+def get_GBC_bodies_parameters(training_X, training_Y):
     from sklearn.ensemble import GradientBoostingClassifier
     from sklearn.model_selection import GridSearchCV
     model = GridSearchCV(GradientBoostingClassifier(random_state=3), param_grid={
         'learning_rate': (0.1, 0.2, 0.5),
         'n_estimators': (100, 200, 500),
-        'min_samples_split': (2, 5, 10),
-        'max_depth': (3, 5, 10),
+        'min_samples_split': (2, 5, 10)
     })
     model.fit(training_X, training_Y)
-    outputList.append("\n" + "Best parameters for GBC bodies model: ")
-    outputList.append("\n" + str(model.best_params_) + "\n")
-    outputList.append(str(model.best_score_))
-    print("Finished GBC bodies model")
-    return model
+    print("Best parameters for GBC bodies model: ")
+    print(str(model.best_params_))
+
 
 def get_SVM_features(models, processed_summaries, processed_bodies):
     result = pd.DataFrame()
@@ -134,23 +111,21 @@ def get_SVM_features(models, processed_summaries, processed_bodies):
             result[model_name] = models[model_name].predict_proba(processed_summaries)[:, 1]
     return result
 
-def get_trained_SVM(processed_SVM_training_features, y_train):
+# hyperparameter optimization for SVM
+def get_SVM_parameters(processed_SVM_training_features, y_train):
     from sklearn import svm
     from sklearn.model_selection import GridSearchCV
     model = GridSearchCV(svm.SVC(), param_grid={
         'C': (0.1, 1, 2),
-        'kernel': ['linear', 'poly', 'rbf', 'sigmoid', 'precomputed'],
+        'kernel': ['poly', 'rbf'],
         'shrinking': [True, False]
     })
     model.fit(processed_SVM_training_features, y_train)
-    outputList.append("\n" + "Best parameters for SVC model: ")
-    outputList.append("\n" + str(model.best_params_) + "\n")
-    outputList.append(str(model.best_score_))
-    return model
+    print("Best parameters for SVC model: ")
+    print(str(model.best_params_))
+
 
 def addVaderFeatures(panda, unprocessed_text):
-    outputList.append(unprocessed_text.size)
-    outputList.append(panda.size)
     from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
     analyzer = SentimentIntensityAnalyzer()
     panda['compound'] = [analyzer.polarity_scores(x)['compound'] for x in unprocessed_text]
@@ -159,7 +134,7 @@ def addVaderFeatures(panda, unprocessed_text):
     panda['pos'] = [analyzer.polarity_scores(x)['pos'] for x in unprocessed_text]
 
 
-training = pd.read_csv('Groceries_Processed_Training_Data.csv', nrows=5000)
+training = pd.read_csv('Groceries_Processed_Training_Data.csv', nrows=50)
 del training['Unnamed: 0']
 
 Y = training['Awesome?']
@@ -194,80 +169,11 @@ processed_bodies_cv = process_TFIDF_bow(rf_review_body_vectorizer, X_cross_valid
 
 print("done getting features")
 
-models = {}
+get_RandomForest_summaries_parameters(processed_summaries_inner_train, y_innerTrain)
+get_RandomForest_bodies_parameters(processed_bodies_inner_train, y_innerTrain)
 
-# create RF model based on bag of words for combined summaries of each product
-RFC_summaries = get_trained_RandomForest_summaries(processed_summaries_inner_train, y_innerTrain)
-models['RFsummaries'] = RFC_summaries
+get_AdaBoost_bodies_parameters(processed_bodies_inner_train, y_innerTrain)
+get_AdaBoost_summaries_parameters(processed_summaries_inner_train, y_innerTrain)
 
-# create RF model based on bag of words for combined reviewTexts of each product
-RFC_bodies = get_trained_RandomForest_bodies(processed_bodies_inner_train, y_innerTrain)
-models['RFbodies'] = RFC_bodies
-
-# make predictions based on the random forest models to get the sentiment scores
-body_scores = RFC_bodies.predict_proba(processed_bodies_outer_train)[:, 1]
-summary_scores = RFC_summaries.predict_proba(processed_summaries_outer_train)[:, 1]
-
-from sklearn.metrics import classification_report
-
-outputList.append("Random forest body scores")
-outputList.append(classification_report(np.round(body_scores.tolist()), y_outerTrain))
-outputList.append("Random forest summary scores")
-outputList.append(classification_report(np.round(summary_scores.tolist()), y_outerTrain))
-
-rf_file.write(str(outputList))
-rf_file.close()
-
-ADA_bodies = get_trained_AdaBoost_bodies(processed_bodies_inner_train, y_innerTrain)
-models['ADAbodies'] = ADA_bodies
-ADA_summaries = get_trained_AdaBoost_summaries(processed_summaries_inner_train, y_innerTrain)
-models['ADAsummaries'] = ADA_summaries
-
-# make predictions based on the random forest models to get the sentiment scores
-body_scores = ADA_bodies.predict_proba(processed_bodies_outer_train)[:, 1]
-summary_scores = ADA_summaries.predict_proba(processed_summaries_outer_train)[:, 1]
-
-from sklearn.metrics import classification_report
-
-outputList.append("ADA body scores")
-outputList.append(classification_report(np.round(body_scores.tolist()), y_outerTrain))
-outputList.append("ADAsummary scores")
-outputList.append(classification_report(np.round(summary_scores.tolist()), y_outerTrain))
-
-ada_file.write(str(outputList))
-ada_file.close()
-
-NB_summaries = get_trained_MultinomialNB(processed_summaries_inner_train, y_innerTrain)
-models['NBsummaries'] = NB_summaries
-NB_bodies = get_trained_MultinomialNB(processed_summaries_inner_train, y_innerTrain)
-models['NBbodies'] = NB_bodies
-
-NB_body_scores = NB_bodies.predict_proba(processed_bodies_outer_train)[:, 1]
-NB_summary_scores = NB_summaries.predict_proba(processed_summaries_outer_train)[:, 1]
-
-from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
-outputList.append("NB body scores")
-outputList.append(classification_report(np.round(NB_body_scores.tolist()), y_outerTrain))
-outputList.append("NB summary scores")
-outputList.append(classification_report(np.round(NB_summary_scores.tolist()), y_outerTrain))
-
-
-GBC_summaries = get_trained_GBC_summaries(processed_summaries_inner_train, y_innerTrain)
-models["GB_summaries"] = GBC_summaries
-GBC_bodies = get_trained_GBC_bodies(processed_bodies_inner_train, y_innerTrain)
-models['GB_bodies'] = GBC_bodies
-
-# make predictions based on the random forest models to get the sentiment scores
-body_scores = GBC_bodies.predict_proba(processed_bodies_outer_train)[:, 1]
-summary_scores = GBC_summaries.predict_proba(processed_summaries_outer_train)[:, 1]
-
-from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
-
-# outputList.append(confusion_matrix(y_cross_validation.tolist(),y_pred))
-outputList.append("GBC body scores")
-outputList.append(classification_report(np.round(body_scores.tolist()), y_outerTrain))
-outputList.append("GBC summary scores")
-outputList.append(classification_report(np.round(summary_scores.tolist()), y_outerTrain))
-
-gbc_file.write(str(outputList))
-gbc_file.close()
+get_GBC_summaries_parameters(processed_summaries_inner_train, y_innerTrain)
+get_GBC_bodies_parameters(processed_bodies_inner_train, y_innerTrain)
