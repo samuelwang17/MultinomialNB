@@ -8,7 +8,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 
 # returns a sci_kit learn TFIDF vectorizer to convert text to TFIDF bag of words
 def get_vectorizer(column, X, ngram_range):
-    vectorizer = TfidfVectorizer(max_features=4000, stop_words='english', ngram_range=ngram_range)
+    vectorizer = TfidfVectorizer(max_features=4000, ngram_range=ngram_range)
     vectorizer.fit(X[column].apply(lambda x: np.str_(x)))
     return vectorizer
 
@@ -53,9 +53,15 @@ def get_trained_MultinomialNB(training_X, training_Y):
     return model
 
 # returns a trained Gradient Boosting Classifier Model
-def get_trained_GBC(training_X, training_Y):
+def get_trained_GBC_bodies(training_X, training_Y):
     from sklearn.ensemble import GradientBoostingClassifier
-    model = GradientBoostingClassifier(n_estimators=100, random_state=3)
+    model = GradientBoostingClassifier(random_state=3, learning_rate=0.1, min_samples_split=2, n_estimators=500)
+    model.fit(training_X, training_Y)
+    return model
+
+def get_trained_GBC_summaries(training_X, training_Y):
+    from sklearn.ensemble import GradientBoostingClassifier
+    model = GradientBoostingClassifier(random_state=3, learning_rate=0.1, min_samples_split=10, n_estimators=200)
     model.fit(training_X, training_Y)
     return model
 
@@ -216,9 +222,9 @@ print(classification_report(np.round(NB_summary_scores.tolist()), y_outerTrain))
 
 ## Gradient Boosting classifier model
 
-GBC_summaries = get_trained_GBC(processed_summaries_inner_train, y_innerTrain)
+GBC_summaries = get_trained_GBC_summaries(processed_summaries_inner_train, y_innerTrain)
 models["GB_summaries"] = GBC_summaries
-GBC_bodies = get_trained_GBC(processed_bodies_inner_train, y_innerTrain)
+GBC_bodies = get_trained_GBC_bodies(processed_bodies_inner_train, y_innerTrain)
 models['GB_bodies'] = GBC_bodies
 
 # make predictions based on the two gbc models to get the sentiment scores
