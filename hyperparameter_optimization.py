@@ -81,8 +81,8 @@ def get_GBC_summaries_parameters(training_X, training_Y):
             'min_samples_split': (2, 5, 10)
         })
     model.fit(training_X, training_Y)
-    print("\n" + "Best parameters for GBC summaries model: ")
-    print("\n" + str(model.best_params_) + "\n")
+    print("Best parameters for GBC summaries model: ")
+    print(str(model.best_params_) + "\n")
 
 # hyperparameter optimization for GBC bodies
 def get_GBC_bodies_parameters(training_X, training_Y):
