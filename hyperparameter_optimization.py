@@ -134,7 +134,7 @@ def addVaderFeatures(panda, unprocessed_text):
     panda['pos'] = [analyzer.polarity_scores(x)['pos'] for x in unprocessed_text]
 
 
-training = pd.read_csv('Groceries_Processed_Training_Data.csv', nrows=50)
+training = pd.read_csv('Groceries_Processed_Training_Data.csv', nrows=5000)
 del training['Unnamed: 0']
 
 Y = training['Awesome?']
